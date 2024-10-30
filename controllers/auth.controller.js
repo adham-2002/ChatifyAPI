@@ -45,7 +45,7 @@ const login = asyncHandler(async (req, res) => {
   );
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
-    path: "/api/v1/auth/refreshtoken",
+    // path: "/api/v1/auth/refreshtoken",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
@@ -59,7 +59,7 @@ const login = asyncHandler(async (req, res) => {
 const logout = asyncHandler(async (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    path: "/api/v1/auth/refreshtoken",
+    // path: "/api/v1/auth/refreshtoken",
   });
   res.json({
     message: "Logout success",
