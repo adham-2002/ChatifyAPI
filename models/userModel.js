@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcrypt";
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -25,10 +26,21 @@ const userSchema = new mongoose.Schema(
     },
   },
   {
-    collation: "users",
     timestamps: true,
+    collection: "users",
   }
 );
+userSchema.pre("save", async function (next) {
+  try {
+    if (this.isNew) {
+      const hashedPassword = await bcrypt.hash(this.password, 12);
+      this.password = hashedPassword;
+      next();
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 const UserModel =
   mongoose.models.UserModel || mongoose.model("UserModel", userSchema);
 export default UserModel;
