@@ -14,5 +14,5 @@ router.route("/login").post(login);
 
 router.route("/logout").post(logout);
 
-router.route("/refresh-token").post(refreshToken);
+router.route("/refreshtoken").post(refreshToken);
 export default router;

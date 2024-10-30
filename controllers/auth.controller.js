@@ -1,7 +1,8 @@
 import asyncHandler from "express-async-handler";
 import { createUser, signUser } from "../services/auth.service.js";
-import { generateToken } from "../services/token.service.js";
-
+import { generateToken, verifyToken } from "../services/token.service.js";
+import { findUser } from "../services/user.service.js";
+import createHttpError from "http-errors";
 const register = asyncHandler(async (req, res) => {
   const { name, email, picture, status, password } = req.body;
   const newUser = await createUser(name, email, picture, status, password);
@@ -18,7 +19,6 @@ const register = asyncHandler(async (req, res) => {
   );
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
-    path: "/api/v1/auth/refresh-token",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(201).json({
@@ -45,7 +45,7 @@ const login = asyncHandler(async (req, res) => {
   );
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
-    path: "/api/v1/auth/refresh-token",
+    path: "/api/v1/auth/refreshtoken",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
@@ -58,12 +58,39 @@ const login = asyncHandler(async (req, res) => {
 });
 const logout = asyncHandler(async (req, res) => {
   res.clearCookie("refreshToken", {
-    path: "/api/v1/auth/refresh-token",
+    httpOnly: true,
+    path: "/api/v1/auth/refreshtoken",
   });
   res.json({
     message: "Logout success",
   });
 });
-const refreshToken = asyncHandler(async (req, res) => {});
+const refreshToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  console.log(req.cookies);
+  if (!refreshToken) {
+    throw createHttpError.Unauthorized("Please login");
+  }
+  const check = await verifyToken(
+    refreshToken,
+    process.env.REFRESH_TOKEN_SECRET
+  );
+  if (!check) {
+    throw createHttpError.Unauthorized("Please login");
+  }
+  const user = await findUser(check._id);
+  const access_token = await generateToken(
+    { _id: user._id },
+    "1h",
+    process.env.ACCESS_TOKEN_SECRET
+  );
+  res.status(200).json({
+    status: "success",
+    data: {
+      access_token,
+      user,
+    },
+  });
+});
 
 export { register, login, logout, refreshToken };
