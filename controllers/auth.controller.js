@@ -1,9 +1,10 @@
 import asyncHandler from "express-async-handler";
-import { createUser } from "../services/auth.service.js";
+import { createUser, signUser } from "../services/auth.service.js";
 import { generateToken } from "../services/token.service.js";
 
 const register = asyncHandler(async (req, res) => {
-  const newUser = await createUser(req.body);
+  const { name, email, picture, status, password } = req.body;
+  const newUser = await createUser(name, email, picture, status, password);
   // generate tokens for one hour
   const access_token = await generateToken(
     { _id: newUser._id },
@@ -30,13 +31,39 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
-  res.send(req.body);
+  const { email, password } = req.body;
+  const user = await signUser(email, password);
+  const access_token = await generateToken(
+    { _id: user._id },
+    "1h",
+    process.env.ACCESS_TOKEN_SECRET
+  );
+  const refresh_token = await generateToken(
+    { _id: user._id },
+    "30d",
+    process.env.REFRESH_TOKEN_SECRET
+  );
+  res.cookie("refreshToken", refresh_token, {
+    httpOnly: true,
+    path: "/api/v1/auth/refresh-token",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+  res.status(200).json({
+    message: "Register success",
+    data: {
+      access_token,
+      user,
+    },
+  });
 });
 const logout = asyncHandler(async (req, res) => {
-  res.send(req.body);
+  res.clearCookie("refreshToken", {
+    path: "/api/v1/auth/refresh-token",
+  });
+  res.json({
+    message: "Logout success",
+  });
 });
-const refreshToken = asyncHandler(async (req, res) => {
-  res.send(req.body);
-});
+const refreshToken = asyncHandler(async (req, res) => {});
 
 export { register, login, logout, refreshToken };

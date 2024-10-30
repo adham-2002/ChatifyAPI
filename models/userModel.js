@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import validator from "validator";
 import bcrypt from "bcrypt";
+import dotenv from "dotenv";
+
+dotenv.config();
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -16,13 +19,17 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "Hey There I'm using Chatify",
+      default: process.env.DEFAULT_STATUS,
     },
     password: {
       type: String,
       required: [true, "Please Enter Your Password"],
       minLength: [8, "Password should be greater than 8 characters"],
       maxLength: [128, "Password should be less than 128 characters"],
+    },
+    picture: {
+      type: String,
+      default: process.env.DEFAULT_PICTURE,
     },
   },
   {

@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import winston from "winston";
 
 const enumerateErrorFormat = winston.format((info) => {
