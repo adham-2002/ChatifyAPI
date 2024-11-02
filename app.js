@@ -38,7 +38,12 @@ app.use(
   })
 );
 //cors
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // app.get("/test", (req, res) => {
 //   throw createHttpError.BadRequest("This is a test error");

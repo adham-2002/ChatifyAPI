@@ -49,7 +49,7 @@ const login = asyncHandler(async (req, res) => {
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
-    message: "Register success",
+    message: "Login success",
     data: {
       access_token,
       user,
