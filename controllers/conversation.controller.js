@@ -22,8 +22,10 @@ export const create_open_conversation = asyncHandler(async (req, res) => {
     sender_id,
     receiver_id
   );
-  if (existed_conversation === null) {
+
+  if (existed_conversation) {
     res.json(existed_conversation);
+    return;
   } else {
     let receiver_user = await findUser(receiver_id);
     let convoData = {
@@ -31,7 +33,6 @@ export const create_open_conversation = asyncHandler(async (req, res) => {
       isGroup: false,
       users: [sender_id, receiver_id],
     };
-    console.log("---------------------------------------" + convoData);
     const newConvo = await CreateConversation(convoData);
     const populatedConvo = await populateConversation(
       newConvo._id,
