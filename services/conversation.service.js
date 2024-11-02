@@ -13,9 +13,11 @@ export const doesConversationExists = asyncHandler(
     })
       .populate("users", "-password")
       .populate("latestMessage");
-    if (!convos) {
+
+    if (convos) {
       throw createHttpError.BadRequest("Oops...something went wrong !");
     }
+
     convos = await UserModel.populate(convos, {
       path: "latestMessage.sender",
       select: "name email picture status",
