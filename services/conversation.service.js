@@ -44,3 +44,29 @@ export const populateConversation = asyncHandler(
     return populateConvo;
   }
 );
+export const getUserConversations = asyncHandler(async (user_id) => {
+  // ابحث عن المحادثات الخاصة بالمستخدم
+  const conversations = await ConversationModel.find({
+    users: { $in: [user_id] },
+  })
+    .populate("users", "-password")
+    .populate("admin", "-password")
+    .populate("latestMessage")
+    .sort({ updatedAt: -1 });
+
+  // تحقق مما إذا كانت هناك محادثات
+  if (!conversations || conversations.length === 0) {
+    return []; // أو يمكنك إرجاع رسالة تشير إلى عدم وجود محادثات
+  }
+
+  // تحميل معلومات إضافية لمحدث الرسالة الأخيرة
+  try {
+    const populatedConversations = await UserModel.populate(conversations, {
+      path: "latestMessage.sender",
+      select: "name email picture status",
+    });
+    return populatedConversations; // إرجاع المحادثات المعبأة
+  } catch (err) {
+    throw createHttpError.BadRequest("Oops...something went wrong!");
+  }
+});

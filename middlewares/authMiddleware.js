@@ -13,7 +13,7 @@ export default asyncHandler(async (req, res, next) => {
       return next(createHttpError.Unauthorized("Please login"));
     }
     req.user = payload;
-    console.log(req.user);
+    console.log(req.user._id);
     next();
   });
 });
