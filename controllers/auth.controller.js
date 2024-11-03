@@ -8,14 +8,14 @@ const register = asyncHandler(async (req, res) => {
   const newUser = await createUser(name, email, picture, status, password);
   // generate tokens for one hour
   const access_token = await generateToken(
-    { _id: newUser._id },
-    "1h",
-    process.env.ACCESS_TOKEN_SECRET
+    { _id: newUser._id }, // payload
+    "1h", // expires in
+    process.env.ACCESS_TOKEN_SECRET // secret
   );
   const refresh_token = await generateToken(
-    { _id: newUser._id },
-    "30d",
-    process.env.REFRESH_TOKEN_SECRET
+    { _id: newUser._id }, // payload
+    "30d", // expires in
+    process.env.REFRESH_TOKEN_SECRET // secret
   );
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
@@ -45,7 +45,7 @@ const login = asyncHandler(async (req, res) => {
   );
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
-    // path: "/api/v1/auth/refreshtoken",
+    path: "/api/v1/auth/refreshtoken",
     maxAge: 30 * 24 * 60 * 60 * 1000,
   });
   res.status(200).json({
@@ -59,7 +59,7 @@ const login = asyncHandler(async (req, res) => {
 const logout = asyncHandler(async (req, res) => {
   res.clearCookie("refreshToken", {
     httpOnly: true,
-    // path: "/api/v1/auth/refreshtoken",
+    path: "/api/v1/auth/refreshtoken",
   });
   res.json({
     message: "Logout success",

@@ -70,3 +70,10 @@ export const getUserConversations = asyncHandler(async (user_id) => {
     throw createHttpError.BadRequest("Oops...something went wrong!");
   }
 });
+export const updateLatestMessage = asyncHandler(async (convo_id, msg) => {
+  const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id);
+  if (!updatedConvo) {
+    throw createHttpError.BadRequest("Oops...something went wrong !");
+  }
+  return updatedConvo;
+});
