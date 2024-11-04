@@ -8,6 +8,10 @@ const conversationSchema = new mongoose.Schema(
       required: [true, "Please enter a name"],
       trim: true,
     },
+    picture: {
+      type: String,
+      required: true,
+    },
     isGroup: {
       type: Boolean,
       required: true,

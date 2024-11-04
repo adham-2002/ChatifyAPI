@@ -6,6 +6,7 @@ export const doesConversationExists = asyncHandler(
   async (sender_id, receiver_id) => {
     let convos = await ConversationModel.find({
       isGroup: false,
+      //$and => operator to check if two conditions are true
       $and: [
         { users: { $elemMatch: { $eq: sender_id } } },
         { users: { $elemMatch: { $eq: receiver_id } } },
@@ -47,6 +48,7 @@ export const populateConversation = asyncHandler(
 export const getUserConversations = asyncHandler(async (user_id) => {
   // ابحث عن المحادثات الخاصة بالمستخدم
   const conversations = await ConversationModel.find({
+    //$in operator to check if a value is in an array
     users: { $in: [user_id] },
   })
     .populate("users", "-password")
@@ -56,7 +58,7 @@ export const getUserConversations = asyncHandler(async (user_id) => {
 
   // تحقق مما إذا كانت هناك محادثات
   if (!conversations || conversations.length === 0) {
-    return []; // أو يمكنك إرجاع رسالة تشير إلى عدم وجود محادثات
+    return [];
   }
 
   // تحميل معلومات إضافية لمحدث الرسالة الأخيرة
@@ -71,7 +73,9 @@ export const getUserConversations = asyncHandler(async (user_id) => {
   }
 });
 export const updateLatestMessage = asyncHandler(async (convo_id, msg) => {
-  const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id);
+  const updatedConvo = await ConversationModel.findByIdAndUpdate(convo_id, {
+    latestMessage: msg,
+  });
   if (!updatedConvo) {
     throw createHttpError.BadRequest("Oops...something went wrong !");
   }

@@ -24,7 +24,7 @@ const register = asyncHandler(async (req, res) => {
   res.status(201).json({
     status: "success",
     data: {
-      access_token,
+      token: access_token,
       user: newUser,
     },
   });
@@ -51,7 +51,7 @@ const login = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "Login success",
     data: {
-      access_token,
+      token: access_token,
       user,
     },
   });
@@ -87,7 +87,7 @@ const refreshToken = asyncHandler(async (req, res) => {
   res.status(200).json({
     status: "success",
     data: {
-      access_token,
+      token: access_token,
       user,
     },
   });
