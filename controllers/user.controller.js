@@ -8,6 +8,6 @@ export const searchUsers = asyncHandler(async (req, res) => {
     logger.error("Please provide a keyword");
     throw createHttpError.BadRequest("Please provide a keyword");
   }
-  const users = await searchUsersService(keyword);
+  const users = await searchUsersService(keyword, req.user._id);
   res.status(200).json(users);
 });
