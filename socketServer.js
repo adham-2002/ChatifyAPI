@@ -14,6 +14,7 @@ export default function (socket, io) {
       console.log("Online users updated:", onlineUsers);
       // Send updated online users list to all clients
       io.emit("get-Online-users", onlineUsers);
+      io.emit("setup socket", socket.id);
     }
 
     // When the user disconnects
@@ -45,6 +46,11 @@ export default function (socket, io) {
     socket.on("stop typing", (data) => {
       io.to(data.userId).emit("stop typing", data);
       console.log("Stop typing event emitted for user:", data.userId);
+    });
+    //-- call user
+    socket.on("call user", (data) => {
+      let userId = data.userToCall;
+      let userSocketId = onlin;
     });
   });
 }

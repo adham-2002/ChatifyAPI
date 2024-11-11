@@ -8,7 +8,7 @@ socket.on("connect", () => {
   console.log("Connected to server with socket ID:", socket.id);
 
   // Emit "join" event to simulate user joining
-  const user = { id: "TestUserID", username: "TestUser" };
+  const user = { id: "123", username: "TestUser" };
   socket.emit("join", user);
   console.log(`User ${user.username} has joined with ID ${user.id}`);
 

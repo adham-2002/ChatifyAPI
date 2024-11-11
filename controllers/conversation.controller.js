@@ -7,7 +7,6 @@ import {
   getUserConversations,
 } from "../services/conversation.service.js";
 import asyncHandler from "express-async-handler";
-import { findUser } from "../services/user.service.js";
 
 export const create_open_conversation = asyncHandler(async (req, res) => {
   //! 1) find the sender and receiver users

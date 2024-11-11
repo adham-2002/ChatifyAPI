@@ -23,6 +23,8 @@ const io = new Server(server, {
 // event when client connect to server
 io.on("connection", (socket) => {
   logger.info(`User connected: ${socket.id}`);
+  //   socket is client-specific, meaning it represents a single client's connection.
+  //?   io represents the entire server and can send messages to all clients or specific groups of clients (rooms).
   Socketserver(socket, io);
 });
 
