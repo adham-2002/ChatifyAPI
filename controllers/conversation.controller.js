@@ -6,6 +6,7 @@ import {
   populateConversation,
   getUserConversations,
 } from "../services/conversation.service.js";
+import { findUser } from "../services/user.service.js";
 import asyncHandler from "express-async-handler";
 
 export const create_open_conversation = asyncHandler(async (req, res) => {
@@ -28,10 +29,10 @@ export const create_open_conversation = asyncHandler(async (req, res) => {
     logger.info("Chat already exists");
     res.json(existed_conversation);
   } else {
-    // let receiver_user = await findUser(receiver_id);
+    let receiver_user = await findUser(receiver_id); //!
     let convoData = {
-      name: "conversation name",
-      picture: "conversation picture",
+      name: receiver_user.name,
+      picture: receiver_user.picture,
       isGroup: false,
       users: [sender_id, receiver_id],
     };

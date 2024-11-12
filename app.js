@@ -35,6 +35,7 @@ app.use(compression());
 app.use(
   fileUpload({
     useTempFiles: true,
+    tempFileDir: "/tmp/",
   })
 );
 //cors

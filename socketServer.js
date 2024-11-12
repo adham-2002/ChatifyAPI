@@ -1,56 +1,66 @@
 let onlineUsers = [];
-
 export default function (socket, io) {
-  // When a user joins
+  //user joins or opens the application
   socket.on("join", (user) => {
-    console.log(`User joined: ${user.id}`);
-
-    // Join the room based on user ID
-    socket.join(user.id);
-
-    // Add joined user to online users list if not already added
-    if (!onlineUsers.some((u) => u.userId === user.id)) {
-      onlineUsers.push({ userId: user.id, socketId: socket.id });
-      console.log("Online users updated:", onlineUsers);
-      // Send updated online users list to all clients
-      io.emit("get-Online-users", onlineUsers);
-      io.emit("setup socket", socket.id);
+    socket.join(user);
+    //add joined user to online users
+    if (!onlineUsers.some((u) => u.userId === user)) {
+      onlineUsers.push({ userId: user, socketId: socket.id });
     }
+    //send online users to frontend
+    io.emit("get-online-users", onlineUsers);
+    //send socket id
+    io.emit("setup socket", socket.id);
+  });
 
-    // When the user disconnects
-    socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.id}`);
-      onlineUsers = onlineUsers.filter((u) => u.socketId !== socket.id);
-      io.emit("get-Online-users", onlineUsers);
-    });
+  //socket disconnect
+  socket.on("disconnect", () => {
+    onlineUsers = onlineUsers.filter((user) => user.socketId !== socket.id);
+    io.emit("get-online-users", onlineUsers);
+  });
 
-    // When a message is sent
-    socket.on("send message", (message) => {
-      const conversation = message.conversation;
-      if (!conversation.users) return;
+  //join a conversation room
+  socket.on("join conversation", (conversation) => {
+    socket.join(conversation);
+  });
 
-      // Broadcast message to each user in the conversation
-      conversation.users.forEach((userId) => {
-        io.to(userId).emit("receive message", message);
-      });
-      console.log("Message sent to conversation users:", message);
+  //send and receive message
+  socket.on("send message", (message) => {
+    let conversation = message.conversation;
+    if (!conversation.users) return;
+    conversation.users.forEach((user) => {
+      if (user._id === message.sender._id) return;
+      socket.in(user._id).emit("receive message", message);
     });
+  });
 
-    // Typing event
-    socket.on("typing", (data) => {
-      io.to(data.userId).emit("typing", data);
-      console.log("Typing event emitted for user:", data.userId);
-    });
+  //typing
+  socket.on("typing", (conversation) => {
+    socket.in(conversation).emit("typing", conversation);
+  });
+  socket.on("stop typing", (conversation) => {
+    socket.in(conversation).emit("stop typing");
+  });
 
-    // Stop typing event
-    socket.on("stop typing", (data) => {
-      io.to(data.userId).emit("stop typing", data);
-      console.log("Stop typing event emitted for user:", data.userId);
+  //call
+  //---call user
+  socket.on("call user", (data) => {
+    let userId = data.userToCall;
+    let userSocketId = onlineUsers.find((user) => user.userId == userId);
+    io.to(userSocketId.socketId).emit("call user", {
+      signal: data.signal,
+      from: data.from,
+      name: data.name,
+      picture: data.picture,
     });
-    //-- call user
-    socket.on("call user", (data) => {
-      let userId = data.userToCall;
-      let userSocketId = onlin;
-    });
+  });
+  //---answer call
+  socket.on("answer call", (data) => {
+    io.to(data.to).emit("call accepted", data.signal);
+  });
+
+  //---end call
+  socket.on("end call", (id) => {
+    io.to(id).emit("end call");
   });
 }

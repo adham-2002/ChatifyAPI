@@ -10,8 +10,13 @@ import {
 export const sendMessage = asyncHandler(async (req, res) => {
   const user_id = req.user._id;
   const { message, convo_id, files } = req.body;
-  if (!convo_id || (!message && !files)) {
-    logger.error("Please provide the conversation id and message");
+  if (!convo_id) {
+    logger.error("Please provide the conversation id");
+    return res.sendStatus(400);
+  }
+
+  if (!message && (!files || files.length === 0)) {
+    logger.error("Please provide either a message or a file");
     return res.sendStatus(400);
   }
   const msgData = {
