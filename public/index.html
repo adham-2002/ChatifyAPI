@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatifyAPI - Documentation</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">ChatifyAPI</div>
+            <nav class="nav-links">
+                <a href="#authentication" class="nav-link">Authentication</a>
+                <a href="#conversations" class="nav-link">Conversations</a>
+                <a href="#messages" class="nav-link">Messages</a>
+                <a href="#users" class="nav-link">Users</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h1>ChatifyAPI Documentation</h1>
+                <p>Powerful real-time chat API for seamless communication in your applications</p>
+            </div>
+        </section>
+
+        <section id="authentication" class="api-section">
+            <div class="container">
+                <h2 class="section-title">Authentication</h2>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/auth/login</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Authenticate user and retrieve JWT token</p>
+                    </div>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>email</td>
+                                <td>string</td>
+                                <td>User's email address</td>
+                            </tr>
+                            <tr>
+                                <td>password</td>
+                                <td>string</td>
+                                <td>User's password</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+}</div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/auth/register</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Create a new user account</p>
+                    </div>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>name</td>
+                                <td>string</td>
+                                <td>User's full name</td>
+                            </tr>
+                            <tr>
+                                <td>email</td>
+                                <td>string</td>
+                                <td>User's email address</td>
+                            </tr>
+                            <tr>
+                                <td>password</td>
+                                <td>string</td>
+                                <td>User's password</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/auth/logout</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Logout the current user and invalidate the token</p>
+                    </div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/auth/refreshtoken</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Get a new access token using the refresh token</p>
+                    </div>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    }
+}</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="conversations" class="api-section">
+            <div class="container">
+                <h2 class="section-title">Conversations</h2>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/conversation</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Create a new conversation with another user</p>
+                    </div>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>receiver_id</td>
+                                <td>string</td>
+                                <td>ID of the user to start conversation with</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/api/v1/conversation</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Get all conversations for the authenticated user</p>
+                    </div>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "conversations": [
+            {
+                "_id": "672c05fc60f3fb044dc2d12c",
+                "participants": ["user1_id", "user2_id"],
+                "lastMessage": "Hello!",
+                "updatedAt": "2024-01-15T12:00:00Z"
+            }
+        ]
+    }
+}</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="messages" class="api-section">
+            <div class="container">
+                <h2 class="section-title">Messages</h2>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-url">/api/v1/message</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Send a new message in a conversation</p>
+                    </div>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>convo_id</td>
+                                <td>string</td>
+                                <td>ID of the conversation</td>
+                            </tr>
+                            <tr>
+                                <td>message</td>
+                                <td>string</td>
+                                <td>Message content</td>
+                            </tr>
+                            <tr>
+                                <td>files</td>
+                                <td>file</td>
+                                <td>Optional file attachments (images, documents)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "message": {
+            "_id": "message_id",
+            "conversation": "convo_id",
+            "sender": "sender_id",
+            "content": "Hello!",
+            "files": ["file_url"],
+            "createdAt": "2024-01-15T12:00:00Z"
+        }
+    }
+}</div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/api/v1/message/:conversationId</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Get all messages in a conversation</p>
+                    </div>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "messages": [
+            {
+                "_id": "message_id",
+                "sender": {
+                    "_id": "sender_id",
+                    "name": "John Doe"
+                },
+                "content": "Hello!",
+                "files": ["file_url"],
+                "createdAt": "2024-01-15T12:00:00Z"
+            }
+        ]
+    }
+}</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="users" class="api-section">
+            <div class="container">
+                <h2 class="section-title">Users</h2>
+                
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/api/v1/user/getme</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Get the authenticated user's profile</p>
+                    </div>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "user": {
+            "_id": "user_id",
+            "name": "John Doe",
+            "email": "john@example.com"
+        }
+    }
+}</div>
+                </div>
+
+                <div class="endpoint-card">
+                    <div class="endpoint-header">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-url">/api/v1/user?keyword=:searchTerm</span>
+                    </div>
+                    <div class="endpoint-description">
+                        <p>Search for users by name or email</p>
+                    </div>
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>keyword</td>
+                                <td>string</td>
+                                <td>Search term to find users</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="response-example">
+{
+    "status": "success",
+    "data": {
+        "users": [
+            {
+                "_id": "user_id",
+                "name": "John Doe",
+                "email": "john@example.com"
+            }
+        ]
+    }
+}</div>
+                </div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

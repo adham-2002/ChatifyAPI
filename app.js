@@ -52,8 +52,14 @@ app.use(
 //! Mount Routes
 //? api v1 routes
 app.use("/api/v1", routes);
+app.use(express.static("public"));
 app.use(async (req, res, next) => {
-  next(createHttpError.NotFound("This route does not exist."));
+  try {
+    // Render the index.html file from the public folder
+    res.sendFile("index.html", { root: "public" });
+  } catch (error) {
+    next(error); // Pass errors to the error handling middleware
+  }
 });
 //error handling
 app.use(async (err, req, res, next) => {
